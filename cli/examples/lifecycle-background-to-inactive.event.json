@@ -1,7 +1,0 @@
-{
-  "method": "lifecycle.onInactive",
-  "result": {
-    "state": "inactive",
-    "previous": "background"
-  }
-}

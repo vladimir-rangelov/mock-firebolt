@@ -1,7 +1,0 @@
-{
-  "method": "lifecycle.onSuspended",
-  "result": {
-    "state": "suspended",
-    "previous": "foreground"
-  }
-}

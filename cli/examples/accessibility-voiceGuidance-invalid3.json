@@ -1,7 +1,0 @@
-{
-  "methods": {
-    "accessibility.voiceGuidance": {
-      "result": "function f(ctx, params) { return { \"enabled\": \"SHOULD-BE-BOOLEAN\" }; }"
-    }
-  }
-}

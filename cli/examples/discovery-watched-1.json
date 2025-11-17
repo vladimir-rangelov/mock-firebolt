@@ -1,7 +1,0 @@
-{
-  "methods": {
-    "discovery.watched": {
-      "result": "function f(ctx, params) { if ( params.entityId === 'partner.com/entity/123' ) { return false; } return true; }"
-    }
-  }
-}

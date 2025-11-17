@@ -1,9 +1,0 @@
----
-methods:
-  accessibility.voiceGuidance:
-    response: |
-      function f(ctx, params) {
-        return {
-          enabled: "SHOULD-BE-BOOLEAN"
-        };
-      }
