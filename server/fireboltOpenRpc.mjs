@@ -64,12 +64,12 @@ function getMeta() {
   return meta;
 }
 
-function getMethod(methodName) {
+function getMethod(methodName, platformApiFirst = false) {
   if (config.app.caseInsensitiveModules) {
     methodName = createCaseAgnosticMethod(methodName);
   }
 
-  const sources = getOpenRPCSources();
+  const sources = getOpenRPCSources(platformApiFirst);
 
   for (const { name: sdkName } of sources) {
     if (methodMaps[sdkName]?.[methodName]) {
@@ -100,7 +100,7 @@ function getSchema(schemaName) {
 }
 
 function getFirstExampleValueForMethod(methodName) {
-  const oMethod = getMethod(methodName);
+  const oMethod = getMethod(methodName, true);
   if ( ! oMethod ) { return undefined; }
   if ( ! oMethod.examples ) { return undefined; }
   if ( oMethod.examples.length <= 0 ) { return undefined; }
@@ -122,8 +122,8 @@ function getFirstExampleParamsForMethod(methodName) {
       acc[name] = value;
     }
     else {
-      //only if the current example has a single param which is an object, we will flatten it
-      if (oMethod.examples[0].params.length === 1 && typeof value === 'object' && value !== null) {
+      //only if the current example has a single param which is an object but not an array, we will flatten it
+      if (oMethod.examples[0].params.length === 1 && typeof value === 'object' && Array.isArray(value) == false && value !== null) {
         Object.entries(value).forEach(([key, val]) => {
           acc[`${key}`] = val;
         });

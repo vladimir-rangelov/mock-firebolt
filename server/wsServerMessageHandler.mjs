@@ -120,7 +120,7 @@ async function handleMessage(message, ws) {
       setTimeout(() => {
 
         if (config.dotConfig.bidirectional) {
-          const bidirectionalMethod = events.unidirectionalEventToBiDirectional(eventMetadata.method);
+          const bidirectionalMethod = eventMetadata.method;
           //get biderctial method exaple params 
           let exampleParams = fireboltOpenRpc.getFirstExampleParamsForMethod(bidirectionalMethod);
          

@@ -25,7 +25,8 @@ import * as messageHandler from './wsServerMessageHandler.mjs';
 import * as wsServerAppApiCaller from './wsServerAppApiCaller.mjs';
 import { logger } from './logger.mjs';
 import { config } from './config.mjs';
-
+import { associateUserWithSessionWsMap, removeUserFromSessionWsMap} from './wsStorage.mjs';
+import { startHttpServer } from './httpServer.mjs';
 
 // If timer goes off, we didn't get a ping from the server, so terminate the socket
 function heartbeat(socket) {
@@ -44,6 +45,7 @@ function heartbeat(socket) {
 function closeConnection(ws) {
   logger.info(`Closing ws connection`);
   if (ws) {
+    removeUserFromSessionWsMap('global');
     ws.terminate();
   }
 }
@@ -55,6 +57,8 @@ function startWsServer() {
 
   wss.on('connection', function connection(ws) {
     ws.isAlive = true;
+    associateUserWithSessionWsMap('global', ws);
+
     ws.on('pong', async hb => {
       heartbeat(ws)
     });
@@ -87,4 +91,6 @@ function startWsServer() {
 }
 
 
+
+startHttpServer();
 startWsServer();

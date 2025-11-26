@@ -13,7 +13,7 @@
       "cliFlag": null,
       "cliShortFlag": null,
       "url_Note": "URL for toApp OpenRPC (Firebolt 2.0 event/provider spec)",
-      "fileName": "../../firebolt-apis/dist/firebolt-app-open-rpc.json",
+      "fileName": "../../../firebolt-apis/dist/firebolt-app-open-rpc.json",
       "enabled": true
     }
   ],
@@ -30,7 +30,7 @@
       "name": "mock",
       "cliFlag": "mock",
       "cliShortFlag": "m",
-      "fileName": "../../firebolt-apis/dist/firebolt-open-rpc.json",
+      "fileName": "../../../firebolt-apis/dist/firebolt-open-rpc.json",
       "enabled": true
     }
   ],

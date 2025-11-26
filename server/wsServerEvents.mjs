@@ -387,6 +387,8 @@ function createBidirectionalEventPayload(method, params) {
  * @returns {string} - The bidirectional-compatible method name (e.g., "module.event").
  */
 function unidirectionalEventToBiDirectional(method) {
+  return method;
+
   if (!method.includes(".")) return method;
 
   const [moduleName, methodName] = method.split(".", 2);
@@ -444,8 +446,8 @@ function emitResponse( method, params) {
     let payload = createBidirectionalEventPayload(bidirectionalMethod, params);
 
     wsArr.forEach((ws) => {
-      ws.send(JSON.stringify(payload)); // Send bidirectional event
-      logger.info(`Sent bidirectional event ${JSON.stringify(payload)}`);
+      //ws.send(JSON.stringify(payload)); // Send bidirectional event
+      //logger.info(`Sent bidirectional event ${JSON.stringify(payload)}`);
     });
   } else {
     // Unidirectional mode (Default behavior)
@@ -475,7 +477,7 @@ export const testExports = {
 }
 
 export {
-  unidirectionalEventToBiDirectional,
+  //unidirectionalEventToBiDirectional,
   emitResponse, registerEventListener, deregisterEventListener,
   isEventListenerOnMessage, isEventListenerOffMessage,
   sendEventListenerAck, sendUnRegistrationAck,

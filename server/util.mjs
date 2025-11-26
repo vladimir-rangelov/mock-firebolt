@@ -168,11 +168,19 @@ function createCaseAgnosticMethod(method){
  *               from the dotConfig to produce a complete list of OpenRPC sources.
  * @returns {Array} Array of OpenRPC source definitions.
  */
-function getOpenRPCSources() {
-  return [
-    ...(config.dotConfig.bidirectional ? config.dotConfig.supportedToAppOpenRPCs : []),
-    ...config.dotConfig.supportedOpenRPCs
-  ];
+function getOpenRPCSources(platforApiFirst = false) {
+  
+  if (platforApiFirst) {
+    return [
+      ...config.dotConfig.supportedOpenRPCs,
+      ...(config.dotConfig.bidirectional ? config.dotConfig.supportedToAppOpenRPCs : [])
+    ];
+  } else {
+    return [
+      ...(config.dotConfig.bidirectional ? config.dotConfig.supportedToAppOpenRPCs : []),
+      ...config.dotConfig.supportedOpenRPCs
+    ];
+  }
 }
 
 // --- Exports ---
