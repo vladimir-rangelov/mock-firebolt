@@ -47,12 +47,12 @@ function getUserIdFromReq(req) {
 function mergeArrayOfStrings(originalFlags, overrideFlags, denyFlags) {
   //all three are arrays of strings, which returns newFlags (array of strings)
   let newFlags = null
-  if ( overrideFlags ) {
+  if (overrideFlags) {
     newFlags = JSON.parse(JSON.stringify(overrideFlags)); // deep copy
   } else {
     newFlags = JSON.parse(JSON.stringify(originalFlags)); // deep copy
   }
-  for(const string in denyFlags) {
+  for (const string in denyFlags) {
     //remove that string from newFlags
     newFlags = newFlags.filter(item => item !== denyFlags[string])
   }
@@ -81,7 +81,7 @@ function createAbsoluteFilePath(fileName) {
 */
 
 function getCreationDate(fileName) {
-  let cFile = createAbsoluteFilePath (fileName)
+  let cFile = createAbsoluteFilePath(fileName)
   const creationTimeSec = Math.floor(fs.statSync(cFile).birthtimeMs / 1000);
   return creationTimeSec
 }
@@ -92,8 +92,8 @@ function getCreationDate(fileName) {
 * @param {String} fileName - Name of file whose modification time needs to be retrieved in seconds
 * @Return: modification time in seconds ex: 1687860232
 */
-function  getModificationDate(fileName) {
-  let mFile = createAbsoluteFilePath (fileName)
+function getModificationDate(fileName) {
+  let mFile = createAbsoluteFilePath(fileName)
   const modificationTimeSec = Math.floor(fs.statSync(mFile).mtimeMs / 1000);
   return modificationTimeSec
 }
@@ -152,8 +152,8 @@ function replaceKeyInObject(obj, oldKey, newKey) {
 * @param {String} method - String containing module and method names delimited by '.'
 * @Return: Return string in the format (moduleName.methodName) with only the moduleName having been converted to lowercase
 */
-function createCaseAgnosticMethod(method){
-  if (method.includes(".")){
+function createCaseAgnosticMethod(method) {
+  if (method.includes(".")) {
     let splitArray = method.split('.');
     let moduleName = splitArray[0].toLowerCase();
     let methodName = splitArray[1];
@@ -169,7 +169,7 @@ function createCaseAgnosticMethod(method){
  * @returns {Array} Array of OpenRPC source definitions.
  */
 function getOpenRPCSources(platforApiFirst = false) {
-  
+
   if (platforApiFirst) {
     return [
       ...config.dotConfig.supportedOpenRPCs,

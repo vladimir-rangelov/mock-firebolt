@@ -22,34 +22,34 @@
 
 // Escape sequences (\x1b is the code for the non-printable control character escape)
 const colors = {
-    reset: "\x1b[0m",
-    bright: "\x1b[1m",
-    dim: "\x1b[2m",
-    underscore: "\x1b[4m",
-    blink: "\x1b[5m",
-    reverse: "\x1b[7m",
-    hidden: "\x1b[8m",
-    
-    fg: {
-        black: "\x1b[30m",
-        red: "\x1b[31m",
-        green: "\x1b[32m",
-        yellow: "\x1b[33m",
-        blue: "\x1b[34m",
-        magenta: "\x1b[35m",
-        cyan: "\x1b[36m",
-        white: "\x1b[37m"
-    },
-    bg: {
-        black: "\x1b[40m",
-        red: "\x1b[41m",
-        green: "\x1b[42m",
-        yellow: "\x1b[43m",
-        blue: "\x1b[44m",
-        magenta: "\x1b[45m",
-        cyan: "\x1b[46m",
-        white: "\x1b[47m"
-    }
+  reset: "\x1b[0m",
+  bright: "\x1b[1m",
+  dim: "\x1b[2m",
+  underscore: "\x1b[4m",
+  blink: "\x1b[5m",
+  reverse: "\x1b[7m",
+  hidden: "\x1b[8m",
+
+  fg: {
+    black: "\x1b[30m",
+    red: "\x1b[31m",
+    green: "\x1b[32m",
+    yellow: "\x1b[33m",
+    blue: "\x1b[34m",
+    magenta: "\x1b[35m",
+    cyan: "\x1b[36m",
+    white: "\x1b[37m"
+  },
+  bg: {
+    black: "\x1b[40m",
+    red: "\x1b[41m",
+    green: "\x1b[42m",
+    yellow: "\x1b[43m",
+    blue: "\x1b[44m",
+    magenta: "\x1b[45m",
+    cyan: "\x1b[46m",
+    white: "\x1b[47m"
+  }
 };
 
 function _log(args) {
@@ -57,28 +57,28 @@ function _log(args) {
 }
 
 const logger = {
-  debug: function(msg) {
+  debug: function (msg) {
     _log(colors.dim + msg + colors.reset);
   },
-  info: function(msg) {
+  info: function (msg) {
     _log(msg);
   },
-  important: function(msg) {
+  important: function (msg) {
     _log(colors.bright + colors.fg.blue + msg + colors.reset + colors.reset);
   },
-  warn: function(msg) {
+  warn: function (msg) {
     _log(colors.fg.cyan + msg + colors.reset);
   },
-  warning: function(msg) {
+  warning: function (msg) {
     _log(colors.fg.cyan + msg + colors.reset);
   },
-  err: function(msg) {
+  err: function (msg) {
     _log(colors.bright + colors.fg.red + msg + colors.reset + colors.reset);
   },
-  error: function(msg) {
+  error: function (msg) {
     _log(colors.bright + colors.fg.red + msg + colors.reset + colors.reset);
   },
-  importantWarning: function(msg) {
+  importantWarning: function (msg) {
     _log(colors.bright + colors.fg.red + colors.reverse + msg + colors.reset + colors.reset);
   },
 };

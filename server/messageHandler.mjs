@@ -3,8 +3,7 @@
 import { logger } from './logger.mjs';
 import * as magicDateTime from './magicDateTime.mjs';
 import * as fireboltOpenRpc from './fireboltOpenRpc.mjs';
-import * as events from './wsServerEvents.mjs';
-import * as wsServerAppApiCaller from './wsServerAppApiCaller.mjs';
+import * as events from './events.mjs';
 import { config } from './config.mjs';
 import { set } from 'lodash-es';
 
@@ -117,6 +116,10 @@ async function handleMessage(message, ws) {
       events.sendEventListenerAck(ws, eventMetadata);
 
       //send an event after 100 milliseconds
+      const sendEventFlag = false; // Set to true to enable sending event after registration
+      if (!sendEventFlag) {
+        return;
+      }
       setTimeout(() => {
 
         if (config.dotConfig.bidirectional) {
@@ -127,19 +130,9 @@ async function handleMessage(message, ws) {
           // Emit a response to the client app indicating that the event listener has been registered      
           events.emitResponse(eventMetadata.method, exampleParams);
         }
-        else {
-
-          const exampleParams = fireboltOpenRpc.getFirstExampleParamsForMethod(eventMetadata.method);
-          // Emit a response to the client app indicating that the event listener has been registered      
-          events.emitResponse(eventMetadata.method, exampleParams);
-
-        }
       }, 100);
-
-
-
-
     }
+    return
   }
 
   // Handle JSON-RPC messages that are event listener disable requests

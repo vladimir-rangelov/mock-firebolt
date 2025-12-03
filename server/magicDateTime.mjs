@@ -54,26 +54,26 @@ import { logger } from './logger.mjs';
  * @param {string} suffix   E.g., '}', '}}', '$'
  */
 /*eslint no-unreachable: 1*/
-var replaceDynamicDateTimeVariables = function(theString, prefix, suffix) {
+var replaceDynamicDateTimeVariables = function (theString, prefix, suffix) {
   var done, re, found, fullDynamicDateTimeString, parts,
-      part0, firstCharOfPart0, relativeDateTime, timeSpecificRelativeDateTime,
-      formatString, sign, num, unitKey, hh, mm, ss, givenTimeToday,
-      newRelativeDateTime, realDateString;
+    part0, firstCharOfPart0, relativeDateTime, timeSpecificRelativeDateTime,
+    formatString, sign, num, unitKey, hh, mm, ss, givenTimeToday,
+    newRelativeDateTime, realDateString;
 
   // Escape special characters. E.g., '{{' becomes '\{\{'
   prefix = prefix.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
   suffix = suffix.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 
   done = false;
-  while ( !done ) {
+  while (!done) {
     re = new RegExp(prefix + '(.*?)' + suffix);
     found = re.exec(theString);
-    if ( found ) {
+    if (found) {
       // found[0] is now something like "{{+15s|X}}" or {{20:00+1d|X}}.
       // found[1] is now something like "+15s|X" or "20:00+1d".
       fullDynamicDateTimeString = found[0];
       parts = found[1].split('|');
-      if ( !parts || parts.length !== 2 ) {
+      if (!parts || parts.length !== 2) {
         throw new Error(`Invalid dynamic date/time string: ${found[1]}`);
       }
 
@@ -82,18 +82,18 @@ var replaceDynamicDateTimeVariables = function(theString, prefix, suffix) {
 
       firstCharOfPart0 = part0.substr(0, 1);
 
-      if ( firstCharOfPart0 === '+' || firstCharOfPart0 === '-' ) {
+      if (firstCharOfPart0 === '+' || firstCharOfPart0 === '-') {
         // relativeDateTime string like "+15s"
         relativeDateTime = part0;
 
         // Separate relativeDateTime into the sign (1 char), the number (<n> digits), and the unit key (remainder)
         re = /^([+-])(\d+)([a-z]+)$/;
         found = re.exec(relativeDateTime);
-        if ( !found || found.length < 4 ) {
+        if (!found || found.length < 4) {
           throw new Error(`Invalid relative date/time string: ${relativeDateTime}`);
         }
-        sign    = found[1];
-        num     = found[2];
+        sign = found[1];
+        num = found[2];
         unitKey = found[3];
 
         try {
@@ -104,15 +104,15 @@ var replaceDynamicDateTimeVariables = function(theString, prefix, suffix) {
         }
 
         // Construct the real date
-        if ( sign === '+' ) {
+        if (sign === '+') {
           try {
             newRelativeDateTime = moment().add(num, unitKey);
           } catch (ex) {
             /* istanbul ignore next */
             throw new Error('Internal error 1');
           }
-        /* istanbul ignore else */
-        } else if ( sign === '-' ) {
+          /* istanbul ignore else */
+        } else if (sign === '-') {
           try {
             newRelativeDateTime = moment().subtract(num, unitKey);
           } catch (ex) {
@@ -139,51 +139,51 @@ var replaceDynamicDateTimeVariables = function(theString, prefix, suffix) {
         // Separate timeSpecificRelativeDateTime into the time portion and the optional sign, num, and unitKey
         re = /^(\d+):(\d+)$/;
         found = re.exec(timeSpecificRelativeDateTime);
-        if ( found && found.length >= 3 ) {
+        if (found && found.length >= 3) {
           // timeSpecificRelativeDateTime string like "20:00"
-          hh          = found[1];
-          mm          = found[2];
-          ss          = 0;
-          sign        = null;
-          num          = null;
+          hh = found[1];
+          mm = found[2];
+          ss = 0;
+          sign = null;
+          num = null;
           unitKey = null;
         } else {
           re = /^(\d+):(\d+):(\d+)$/;
           found = re.exec(timeSpecificRelativeDateTime);
-          if ( found && found.length >= 4 ) {
+          if (found && found.length >= 4) {
             // timeSpecificRelativeDateTime string like "19:00:05"
-            hh      = found[1];
-            mm      = found[2];
-            ss      = found[3];
-            sign    = null;
-            num     = null;
+            hh = found[1];
+            mm = found[2];
+            ss = found[3];
+            sign = null;
+            num = null;
             unitKey = null;
           } else {
             re = /^(\d+):(\d+)([+-])(\d+)([a-z]+)$/;
             found = re.exec(timeSpecificRelativeDateTime);
-            if ( found && found.length >= 6 ) {
+            if (found && found.length >= 6) {
               // timeSpecificRelativeDateTime string like "19:00+1d"
-              hh          = found[1];
-              mm          = found[2];
-              ss          = 0;
-              sign        = found[3];
-              num         = found[4];
-              unitKey     = found[5];
-              if ( unitKey.toLowerCase() !== 'd' ) {
+              hh = found[1];
+              mm = found[2];
+              ss = 0;
+              sign = found[3];
+              num = found[4];
+              unitKey = found[5];
+              if (unitKey.toLowerCase() !== 'd') {
                 throw new Error(`Invalid relative date/time string (d only): ${timeSpecificRelativeDateTime}`);
               }
             } else {
               re = /^(\d+):(\d+):(\d+)([+-])(\d+)([a-z]+)$/;
               found = re.exec(timeSpecificRelativeDateTime);
-              if ( found && found.length >= 7) {
+              if (found && found.length >= 7) {
                 // timeSpecificRelativeDateTime string like 19:00:05+1d"
-                hh      = found[1];
-                mm      = found[2];
-                ss      = found[3];
-                sign    = found[4];
-                num     = found[5];
+                hh = found[1];
+                mm = found[2];
+                ss = found[3];
+                sign = found[4];
+                num = found[5];
                 unitKey = found[6];
-                if ( unitKey.toLowerCase() !== 'd' ) {
+                if (unitKey.toLowerCase() !== 'd') {
                   throw new Error(`Invalid relative date/time string (d only): ${timeSpecificRelativeDateTime}`);
                 }
               } else {
@@ -194,7 +194,7 @@ var replaceDynamicDateTimeVariables = function(theString, prefix, suffix) {
         }
 
         try {
-          if ( num ) { num = parseInt(num, 10); }
+          if (num) { num = parseInt(num, 10); }
         } catch (ex) {
           /* istanbul ignore next */
           throw new Error(`Invalid relative date/time string (numeric portion): ${timeSpecificRelativeDateTime}`);
@@ -202,22 +202,22 @@ var replaceDynamicDateTimeVariables = function(theString, prefix, suffix) {
 
         try {
           /* istanbul ignore else */
-          if ( hh ) { hh = parseInt(hh, 10); }
+          if (hh) { hh = parseInt(hh, 10); }
         } catch (ex) {
           /* istanbul ignore next */
           throw new Error(`Invalid relative date/time string (hh portion): ${timeSpecificRelativeDateTime}`);
         }
-  
+
         try {
           /* istanbul ignore else */
-          if ( mm ) { mm = parseInt(mm, 10); }
+          if (mm) { mm = parseInt(mm, 10); }
         } catch (ex) {
           /* istanbul ignore next */
           throw new Error(`Invalid relative date/time string (mm portion): ${timeSpecificRelativeDateTime}`);
         }
-  
+
         try {
-          if ( ss && typeof ss === 'string' ) { ss = parseInt(ss, 10); }
+          if (ss && typeof ss === 'string') { ss = parseInt(ss, 10); }
         } catch (ex) {
           /* istanbul ignore next */
           throw new Error(`Invalid relative date/time string (ss portion): ${timeSpecificRelativeDateTime}`);
@@ -226,17 +226,17 @@ var replaceDynamicDateTimeVariables = function(theString, prefix, suffix) {
         // Construct the real date
 
         // First get moment date for given time today
-        givenTimeToday = moment({ hours:hh, minutes: mm, seconds: ss });
+        givenTimeToday = moment({ hours: hh, minutes: mm, seconds: ss });
 
         // Now add/subtract days if asked to do so
-        if ( sign === '+' ) {
+        if (sign === '+') {
           try {
             newRelativeDateTime = givenTimeToday.add(num, unitKey);
           } catch (ex) {
             /* istanbul ignore next */
             throw new Error('Internal error 4');
           }
-        } else if ( sign === '-' ) {
+        } else if (sign === '-') {
           try {
             newRelativeDateTime = givenTimeToday.subtract(num, unitKey);
           } catch (ex) {
@@ -268,7 +268,7 @@ var replaceDynamicDateTimeVariables = function(theString, prefix, suffix) {
 
 // Given a serialized JSON object (string), replace any/all {{+2h|x}}, etc. values with appropriately
 // translated date/time strings/epochs/etc and then return the translated string object.
-var replaceDynamicDateTimeVariablesStr = function(ss, prefix, suffix) {
+var replaceDynamicDateTimeVariablesStr = function (ss, prefix, suffix) {
   try {
     // If the JSON contains "foo": "\"{{+1h|x}}\"", then this will translate into "foo": "123456789000"
     ss = replaceDynamicDateTimeVariables(ss, '\\"' + prefix, suffix + '\\"');
@@ -286,7 +286,7 @@ var replaceDynamicDateTimeVariablesStr = function(ss, prefix, suffix) {
 
 // Given a JS object, replace any/all {{+2h|x}}, etc. values with appropriately
 // translated date/time strings/epochs/etc and then return the traslated JSON object.
-var replaceDynamicDateTimeVariablesObj = function(oJson, prefix, suffix) {
+var replaceDynamicDateTimeVariablesObj = function (oJson, prefix, suffix) {
   var ss;
   try {
     ss = JSON.stringify(oJson);

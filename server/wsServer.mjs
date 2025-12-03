@@ -20,17 +20,17 @@
 
 'use strict';
 
-import  { WebSocketServer } from 'ws';
-import * as messageHandler from './wsServerMessageHandler.mjs';
-import * as wsServerAppApiCaller from './wsServerAppApiCaller.mjs';
+import { WebSocketServer } from 'ws';
+import * as messageHandler from './messageHandler.mjs';
+import * as appApiCaller from './appApiCaller.mjs';
 import { logger } from './logger.mjs';
 import { config } from './config.mjs';
-import { associateUserWithSessionWsMap, removeUserFromSessionWsMap} from './wsStorage.mjs';
-import { startHttpServer } from './httpServer.mjs';
+import { appendWsConnection, removeWsConnection } from './wsConnectionList.mjs';
+
 
 // If timer goes off, we didn't get a ping from the server, so terminate the socket
 function heartbeat(socket) {
-  if ( socket.pingTimeout ) { clearTimeout(socket.pingTimeout); }
+  if (socket.pingTimeout) { clearTimeout(socket.pingTimeout); }
 
   // Use `WebSocket#terminate()`, which immediately destroys the connection,
   // instead of `WebSocket#close()`, which waits for the close timer.
@@ -45,7 +45,7 @@ function heartbeat(socket) {
 function closeConnection(ws) {
   logger.info(`Closing ws connection`);
   if (ws) {
-    removeUserFromSessionWsMap('global');
+    removeWsConnection(ws);
     ws.terminate();
   }
 }
@@ -53,11 +53,11 @@ function closeConnection(ws) {
 function startWsServer() {
 
   console.info(`Starting WebSocket server on port ${config.app.socketPort}`);
-  const wss = new WebSocketServer({  port: config.app.socketPort}); 
+  const wss = new WebSocketServer({ port: config.app.socketPort });
 
   wss.on('connection', function connection(ws) {
     ws.isAlive = true;
-    associateUserWithSessionWsMap('global', ws);
+    appendWsConnection(ws);
 
     ws.on('pong', async hb => {
       heartbeat(ws)
@@ -65,15 +65,15 @@ function startWsServer() {
 
     // Remove ws connection of user
     ws.on('close', function close() {
-      closeConnection( ws);
+      closeConnection(ws);
     });
 
     ws.on('message', async message => {
-      messageHandler.handleMessage(message,  ws);
+      messageHandler.handleMessage(message, ws);
     });
     setTimeout(() => {
-        wsServerAppApiCaller.testAllAppApiMethods(ws);
-      }, 100);
+      appApiCaller.testAllAppApiMethods(ws);
+    }, 100);
   });
 
   const interval = setInterval(function ping() {
@@ -90,7 +90,6 @@ function startWsServer() {
   return true;
 }
 
+export { startWsServer };
 
 
-startHttpServer();
-startWsServer();

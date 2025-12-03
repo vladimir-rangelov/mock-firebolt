@@ -10,7 +10,7 @@ import * as configureAPI from './configureHttpAPI.mjs';
 const app = express();
 
 function startHttpServer() {
-   
+
     app.use(bodyParser.json({ limit: '1mb' })); // to support JSON-encoded bodies
     app.use(bodyParser.urlencoded({             // to support URL-encoded bodies
         extended: true

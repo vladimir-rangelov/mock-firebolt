@@ -36,17 +36,17 @@ import { dereferenceMeta } from './fireboltOpenRpcDereferencing.mjs';
 
 function isSdkEnabled(sdk) {
   return true;
-} 
+}
 
 // Build a method map for a single SDK (given by an object read from firebolt-xxx-sdk.json file)
 function buildMethodMap(sdkOpenrpc) {
-  if ( ! sdkOpenrpc || ! isObject(sdkOpenrpc) ) { return {}; }
-  if ( ! sdkOpenrpc ) { return undefined; }
-  if ( ! sdkOpenrpc.methods ) { return undefined; }
+  if (!sdkOpenrpc || !isObject(sdkOpenrpc)) { return {}; }
+  if (!sdkOpenrpc) { return undefined; }
+  if (!sdkOpenrpc.methods) { return undefined; }
 
-  var result = sdkOpenrpc.methods.reduce(function(map, obj) {
+  var result = sdkOpenrpc.methods.reduce(function (map, obj) {
     //coverting module names to lowerCase
-    if(config.app.caseInsensitiveModules){
+    if (config.app.caseInsensitiveModules) {
       obj.name = createCaseAgnosticMethod(obj.name);
     }
     map[obj.name] = obj;
@@ -81,11 +81,11 @@ function getMethod(methodName, platformApiFirst = false) {
 
 function isMethodKnown(methodName) {
   // Returns true in "novalidate mode"
-  if( ! config.validate.includes("method") ){
+  if (!config.validate.includes("method")) {
     return true;
   }
   const oMethod = getMethod(methodName);
-  return ( oMethod ? true : false );
+  return (oMethod ? true : false);
 }
 
 function getSchema(schemaName) {
@@ -101,15 +101,15 @@ function getSchema(schemaName) {
 
 function getFirstExampleValueForMethod(methodName) {
   const oMethod = getMethod(methodName, true);
-  if ( ! oMethod ) { return undefined; }
-  if ( ! oMethod.examples ) { return undefined; }
-  if ( oMethod.examples.length <= 0 ) { return undefined; }
-  if ( ! oMethod.examples[0].result ) { return undefined; }
+  if (!oMethod) { return undefined; }
+  if (!oMethod.examples) { return undefined; }
+  if (oMethod.examples.length <= 0) { return undefined; }
+  if (!oMethod.examples[0].result) { return undefined; }
   return oMethod.examples[0].result.value;
 }
 
-function getFirstExampleParamsForMethod(methodName) {
-  const oMethod = getMethod(methodName);
+function getFirstExampleParamsForMethod(methodName, platformApiFirst = false) {
+  const oMethod = getMethod(methodName, platformApiFirst);
   if (!oMethod) { return []; }
   if (!oMethod.examples) { return []; }
   if (oMethod.examples.length <= 0) { return []; }
@@ -142,15 +142,15 @@ function getFirstExampleParamsForMethod(methodName) {
 // Returns undefined if/when no notes or an object like { alternative: "xxx", notes: "xxx", docUrl: "xxx" }
 function getDeveloperNotesForMethod(methodName) {
   const oMethod = getMethod(methodName);
-  if ( ! oMethod ) { return undefined; }
-  if ( ! oMethod.tags ) { return undefined; }
-  if ( oMethod.tags.length <= 0 ) { return undefined; }
+  if (!oMethod) { return undefined; }
+  if (!oMethod.tags) { return undefined; }
+  if (oMethod.tags.length <= 0) { return undefined; }
   const developerNotesTagName = config.app.developerNotesTagName;
   const developerNotesTag = oMethod.tags.find(oTag => oTag.name.toLowerCase() === developerNotesTagName.toLowerCase());
-  if ( ! developerNotesTag ) { return undefined; }
+  if (!developerNotesTag) { return undefined; }
   const developerNotes = {
-    notes       : developerNotesTag['x-notes'],
-    docUrl      : developerNotesTag['x-doc-url']
+    notes: developerNotesTag['x-notes'],
+    docUrl: developerNotesTag['x-doc-url']
   };
   return developerNotes;
 }
@@ -160,7 +160,7 @@ function getDeveloperNotesForMethod(methodName) {
 function validateMethodCall(methodName, params) {
   // Returns an empty array in "novalidate mode"
   return [];
-  if( ! config.validate.includes("params") ){
+  if (!config.validate.includes("params")) {
     return [];
   }
   let errors = [];
@@ -168,27 +168,27 @@ function validateMethodCall(methodName, params) {
   try {
     const oMethod = getMethod(methodName);
     const oParams = oMethod.params;
-    for ( let pp = 0; pp < oParams.length; pp += 1 ) {
+    for (let pp = 0; pp < oParams.length; pp += 1) {
       let oParam = oParams[pp];
       let paramName = oParam.name;
       let oSchema = oParam.schema;
-      if ( '$ref' in oSchema  ) {
+      if ('$ref' in oSchema) {
         const ref = oSchema['$ref'];
         const schemaName = ref.substring(ref.lastIndexOf('/') + 1);
         oSchema = getSchema(schemaName);
       }
 
-      if ( oParam.required || ( params && params[paramName] ) ) {
+      if (oParam.required || (params && params[paramName])) {
         const validate = ajv.compile(oSchema);
         const valid = validate(params[paramName]);
-        if ( !valid ) {
+        if (!valid) {
           errors.push(...validate.errors);
         }
       }
     }
 
     return errors || [];
-  } catch ( ex ) {
+  } catch (ex) {
     logger.error('ERROR: Could not validate method call:');
     logger.error('Method:');
     logger.error(methodName);
@@ -206,19 +206,19 @@ function validateMethodCall(methodName, params) {
 // Returns an array of errors; Returns an empty array if no errors are found
 function validateMethodResult(val, methodName) {
   // Returns an empty array in "novalidate mode"
-  if( ! config.validate.includes("response") ){
+  if (!config.validate.includes("response")) {
     return [];
   }
   let errors = [];
 
   // Short-circuit validation for result values specified as functions
-  if ( typeof val === 'string' && val.trimStart().startsWith('function') ) { return errors; }
+  if (typeof val === 'string' && val.trimStart().startsWith('function')) { return errors; }
 
   try {
     const oMethod = getMethod(methodName);
     const oResult = oMethod.result;
     let oSchema = oResult.schema;
-    if ( '$ref' in oSchema  ) {
+    if ('$ref' in oSchema) {
       const ref = oSchema['$ref'];
       const schemaName = ref.substring(ref.lastIndexOf('/') + 1);
       oSchema = getSchema(schemaName);
@@ -226,12 +226,12 @@ function validateMethodResult(val, methodName) {
 
     const validate = ajv.compile(oSchema);
     const valid = validate(val);
-    if ( !valid ) {
+    if (!valid) {
       errors = validate.errors;
     }
 
     return errors || [];
-  } catch ( ex ) {
+  } catch (ex) {
     logger.error('ERROR: Could not validate value:');
     logger.error('Value:');
     logger.error(val);
@@ -256,19 +256,19 @@ function validateMethodError(val) {
   const errors = [];
 
   // Short-circuit validation for error values specified as functions
-  if ( typeof val === 'string' && val.trimStart().startsWith('function') ) { return errors; }
+  if (typeof val === 'string' && val.trimStart().startsWith('function')) { return errors; }
 
-  if ( !( isObject(val)) ) {
+  if (!(isObject(val))) {
     errors.push(`ERROR: ${val} is not a valid error value: Object expected`);
     return errors;
   }
-  if ( !('code' in val)) {
+  if (!('code' in val)) {
     errors.push(`ERROR: ${val} is not a valid error value: Mandatory 'code' property missing`);
     return errors;
   }
-  if ( !('message' in val )) {
+  if (!('message' in val)) {
     errors.push(`ERROR: ${val} is not a valid error value: Mandatory 'message' property missing`);
-    return errors; 
+    return errors;
   }
   return errors;
 }
@@ -276,19 +276,19 @@ function validateMethodError(val) {
 // Load the firebolt-xxx-sdk.json file for the given SDK, if that SDK is enabled
 async function readSdkJsonFileIfEnabled(sdkName) {
   let url, fileUrl;
-  
-  if ( isSdkEnabled(sdkName) ) {
+
+  if (isSdkEnabled(sdkName)) {
     try {
       const oSdk = getOpenRPCSources().find((oSdk) => oSdk.name === sdkName);
-      
+
       if (!oSdk) {
         logger.error(`ERROR: SDK ${sdkName} not found in supportedOpenRPCs or supportedToAppOpenRPCs; Skipping`);
         return;
-      }      
+      }
 
       if (oSdk.fileName) {
         const openRpcFileName = oSdk.fileName;
-        if ( path.isAbsolute(openRpcFileName) || openRpcFileName.startsWith('~') ) {
+        if (path.isAbsolute(openRpcFileName) || openRpcFileName.startsWith('~')) {
           // Absolute file path given -- read from that file path exactly as-is
           fileUrl = new URL(openRpcFileName, import.meta.url);
         } else {
@@ -304,8 +304,8 @@ async function readSdkJsonFileIfEnabled(sdkName) {
         logger.error(`ERROR: Either 'url' or 'fileName' must be specified for SDK ${sdkName}; Skipping`);
         return;
       }
-      
-    } catch ( ex ) {
+
+    } catch (ex) {
       logger.error(`ERROR: Could not load ${sdkName} SDK from ${url}`);
       console.log(ex);
     }
@@ -316,9 +316,9 @@ async function readSdkJsonFileIfEnabled(sdkName) {
 // NOTE: Assumes the build process has put the firebolt-xxx-sdk.json files in the same directory
 //       as the source code from the src/ directory
 async function readAllEnabledSdkJsonFiles() {
- // if (isSdkEnabled("mock")) {
- //   return readSdkJsonFileIfEnabled("mock");
- // }
+  // if (isSdkEnabled("mock")) {
+  //   return readSdkJsonFileIfEnabled("mock");
+  // }
 
   const sdkList = getOpenRPCSources().map((oSdk) => readSdkJsonFileIfEnabled(oSdk.name));
 
@@ -335,7 +335,7 @@ function buildMethodMapsForAllEnabledSdks() {
       const methodMap = buildMethodMap(meta[sdkName]);
 
       // Assign to appropriate map
-      if ((config.dotConfig.supportedOpenRPCs.some((sdk) => sdk.name === sdkName)) || (config.dotConfig.supportedToAppOpenRPCs.some((sdk) => sdk.name === sdkName)) ) {
+      if ((config.dotConfig.supportedOpenRPCs.some((sdk) => sdk.name === sdkName)) || (config.dotConfig.supportedToAppOpenRPCs.some((sdk) => sdk.name === sdkName))) {
         methodMaps[sdkName] = methodMap;
       }
     }
@@ -358,14 +358,14 @@ const methodMaps = {};
 
 // Load OpenRPC definitions for all enabled SDKs, then build method maps for each
 readAllEnabledSdkJsonFiles()
-.then(() => meta = dereferenceMeta(rawMeta))
-.then(buildMethodMapsForAllEnabledSdks);
+  .then(() => meta = dereferenceMeta(rawMeta))
+  .then(buildMethodMapsForAllEnabledSdks);
 
 
 
 // --- Exports ---
-export const testExports={
-  rawMeta, meta, methodMaps, buildMethodMapsForAllEnabledSdks, buildMethodMap 
+export const testExports = {
+  rawMeta, meta, methodMaps, buildMethodMapsForAllEnabledSdks, buildMethodMap
 }
 export {
   getFirstExampleParamsForMethod,

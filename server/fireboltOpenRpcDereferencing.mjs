@@ -20,11 +20,10 @@
 
 'use strict';
 
-import { config } from './config.mjs';
 import { getOpenRPCSources } from './util.mjs'
 
-function isObject(thing) { return ( thing === Object(thing) ); }
-function isArray(thing)  { return ( Array.isArray(thing) );    }
+function isObject(thing) { return (thing === Object(thing)); }
+function isArray(thing) { return (Array.isArray(thing)); }
 
 function ref2schemaName(ref) {
   return ref.substring(ref.lastIndexOf('/') + 1);
@@ -136,7 +135,7 @@ function dereferenceSchemas(metaForSdk, methodName) {
   const methods = metaForSdk.methods;
   const matchMethods = methods.filter((method) => method.name === methodName);
   const matchMethod = matchMethods[0];
- 
+
   replaceRefs(metaForSdk, matchMethod, 'result');
   replaceRefs(metaForSdk, matchMethod, 'params');
   replaceRefs(metaForSdk, matchMethod, 'tags');

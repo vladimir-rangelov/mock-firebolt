@@ -42,13 +42,13 @@ function handleError(fileName, __dirname) {
 function loadDotConfig() {
   let fileName, dotConfig;
   try {
-    fileName = createAbsoluteFilePath ('.mf.config.json');
+    fileName = createAbsoluteFilePath('.mf.config.json');
 
     dotConfig = JSON.parse(
       fs.readFileSync(fileName, 'UTF-8')
     );
     logger.info(`Read Mock Firebolt configuration from ${fileName}`);
-  } catch ( ex ) {
+  } catch (ex) {
     handleError(fileName, __dirname);
 
     process.exit(1);

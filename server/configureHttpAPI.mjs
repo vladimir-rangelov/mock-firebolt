@@ -18,28 +18,45 @@
 
 'use strict';
 
-import { getWsForUser} from './wsStorage.mjs';
+import { getWsConnectionList } from './wsConnectionList.mjs';
+import * as appApiCaller from './appApiCaller.mjs';
 
-// POST /api/v1/raw
-// Expected body: Any
+function triggerEvent(req, res) {
+    try {
+        appApiCaller.testAppApiMethods( req.body.method);
+        res.status(200).send({
+            status: "Sent payload"
+        })
+    } catch (error) {
+        console.error(error)
+        res.status(500).send({
+            status: "Cannot send payload",
+            error
+        })
+    }
+}
+
 function rawPayload(req, res) {
     try {
-        const userId = 'global';
-        const ws = getWsForUser(userId);
+        const wsList = getWsConnectionList();
 
-        if (!ws) {
-            throw new Error(`No WebSocket connection found for user: ${userId}`);
+        let skip = false;
+        if (!skip) {
+            if (!wsList || wsList.length === 0) {
+                throw new Error(`Empty WebSocket connection list`);
+            }
+
+            const payload = {
+                jsonrpc: "2.0",
+                ...req.body
+            };
+
+            console.log(`Sending raw payload: ${JSON.stringify(payload)}`);
+
+            wsList.forEach(ws => {
+                ws.send(JSON.stringify(payload));
+            });
         }
-
-        const payload = {
-            jsonrpc: "2.0",
-            ...req.body
-        };
-
-        console.log(`Sending raw payload: ${JSON.stringify(payload)}`);
-
-        ws.send(JSON.stringify(payload));
-
         res.status(200).send({
             status: "Sent payload"
         })
@@ -55,7 +72,9 @@ function rawPayload(req, res) {
 function configureAPI(app) {
 
 
-    app.post('/api/v1/raw',  rawPayload);
+    app.post('/api/v1/raw', rawPayload);
+
+    app.post('/api/v1/trigger-event', triggerEvent);
 
     // =========================== Health Check Route =========================
 
