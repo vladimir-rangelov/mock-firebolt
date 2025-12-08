@@ -117,7 +117,7 @@ function getFirstExampleParamsForMethod(methodName, platformApiFirst = false) {
 
   //return oMethod.examples[0].params;
   const map = oMethod.examples[0].params.reduce((acc, { name, value }) => {
-    const oldUnidirectionalSpec = true;
+    const oldUnidirectionalSpec = false;
     if (oldUnidirectionalSpec == false) {
       acc[name] = value;
     }

@@ -7,6 +7,16 @@
   ],
   "multiUserConnections": "warn",
   "bidirectional": true,
+  "supportedToAppOpenRPCs": [
+    {
+      "name": "coreToApp",
+      "cliFlag": null,
+      "cliShortFlag": null,
+      "url_Note": "URL for toApp OpenRPC (Firebolt 2.0 event/provider spec)",
+      "fileName": "/home/vlad/dev/projects/firebolt/firebolt/firebolt-apis/dist/firebolt-app-open-rpc.json",
+      "enabled": true
+    }
+  ],
   "supportedOpenRPCs": [
     {
       "name": "core",
@@ -24,16 +34,7 @@
       "enabled": true
     }
   ],
-  "supportedToAppOpenRPCs": [
-    {
-      "name": "coreToApp",
-      "cliFlag": null,
-      "cliShortFlag": null,
-      "url_Note": "URL for toApp OpenRPC (Firebolt 2.0 event/provider spec)",
-      "fileName": "/home/vlad/dev/projects/firebolt/firebolt/firebolt-apis/dist/firebolt-app-open-rpc.json",
-      "enabled": true
-    }
-  ],
+ 
   "eventConfig": {
     "registrationMessage": {
       "searchRegex": "(?=.*\\\"method\\\".*)(?=.*\\\"listen\\\":true.*).*\\.on\\S*",
